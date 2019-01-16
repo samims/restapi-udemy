@@ -33,15 +33,15 @@ class Update(models.Model):
         return self.content or ""
 
     def serialize(self):
-        # try:
-        #     image = self.image.url
-        # except:
-        #     Image = ""
-        # data = {
-        #     "id": self.id,
-        #     "content": self.content,
-        # }
-        json_data = serialize("json", [self], fields=("id", 'user', 'content', 'image'))
-        struct = json.loads(json_data)
-        data = json.dumps(struct[0]['fields'])
-        return data
+        try:
+            image = self.image.url
+        except ValueError:
+            image = ""
+
+        data = {
+            "id": self.id,
+            "content": self.content,
+            "user": self.user.id,
+            "image": image
+        }
+        return json.dumps(data)

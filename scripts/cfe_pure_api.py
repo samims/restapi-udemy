@@ -25,14 +25,16 @@ def get_list():
 def create_update():
     new_data = {
         "user": 1,
-        "content": "another new content"
+        "content": ""
     }
-    r = requests.delete(BASE_URL + ENDPOINT,  data=new_data)
+    r = requests.post(BASE_URL + ENDPOINT,  data=new_data)
     print(r.status_code)
-    print(r.headers)
+    # print(r.headers)
     if r.status_code == requests.codes.ok:
-        print(r.text)
+        return r.json()
+
+    return r.text
 
 
-get_list()
-create_update()
+# get_list()
+print(create_update())

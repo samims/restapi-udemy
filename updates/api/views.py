@@ -1,8 +1,11 @@
 import json
 from django.views.generic import View
 from django.http import HttpResponse
+
+from ..forms import UpdateModelForm
 from ..models import Update as UpdateModel
 from .mixins import CSRFExemptMixin
+from myapi.mixins import HttpResponseMixin
 
 
 class UpdateModeDetailAPIView(CSRFExemptMixin, View):
@@ -25,7 +28,7 @@ class UpdateModeDetailAPIView(CSRFExemptMixin, View):
         return HttpResponse({}, content_type="application/json")
 
 
-class UpdateModelListAPIView(CSRFExemptMixin, View):
+class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
     """
     List & CreateAPI view
     """
@@ -36,9 +39,17 @@ class UpdateModelListAPIView(CSRFExemptMixin, View):
         return HttpResponse(json_data, content_type="application/json")
 
     def post(self, request, *args, **kwargs):
-        data = json.dumps({"message": "Unknown data"})
-        return HttpResponse(data, content_type="application/json")
+        form = UpdateModelForm(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=True)
+            obj_data = obj.serialize()
+            return self.render_to_response(obj_data, status=201)
+        if form.errors:
+            data = json.dumps(form.errors)
+            return self.render_to_response(data, status=400)
+        data = {"message": "Not Allowd"}
+        return self.render_to_response(data, status=400)
 
-    def delete(self, reqiest, *args, **kwargs):
+    def delete(self, request, *args, **kwargs):
         data = json.dumps({"message": "You can not delete an entire list"})
         return HttpResponse(data, content_type="application/json")

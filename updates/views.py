@@ -1,6 +1,4 @@
-import json
 from django.http import HttpResponse, JsonResponse
-from django.core.serializers import serialize
 from django.views.generic import View
 
 from myapi.mixins import JsonResponseMixin
