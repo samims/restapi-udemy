@@ -1,5 +1,4 @@
 import json
-from django.core.serializers import serialize
 from django.conf import settings
 from django.db import models
 

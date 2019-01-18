@@ -12,9 +12,7 @@ def get_list():
     if status_code != 404:
         print("Probably good enough!")
     data = r.json()
-    print(type(json.dumps(data)))
     for obj in data:
-        print(obj["id"])
         if obj['id'] == 1:
             r2 = requests.get(BASE_URL + ENDPOINT + str(obj['id']))
             # print(dir(r2))
@@ -22,12 +20,13 @@ def get_list():
     return data
 
 
+
 def create_update():
     new_data = {
         "user": 1,
-        "content": ""
+        "content": "This is the third article"
     }
-    r = requests.post(BASE_URL + ENDPOINT,  data=new_data)
+    r = requests.post(BASE_URL + ENDPOINT + "1" + "/",  data=new_data)
     print(r.status_code)
     # print(r.headers)
     if r.status_code == requests.codes.ok:
@@ -36,5 +35,22 @@ def create_update():
     return r.text
 
 
-# get_list()
-print(create_update())
+# print(get_list())
+# print(create_update())
+# print(get_object())
+
+def do_obj_update():
+    new_data = {
+        "content": "Another more cool content"
+    }
+    r = requests.post(BASE_URL + ENDPOINT + "1" + "/",  data=new_data)
+    new_data = {
+        "id": 1,
+        "content": "Another more cool content"
+    }
+    r = requests.put(BASE_URL, + ENDPOINT, data=new_data)
+
+    print(r.headers)
+    print(r.status_code)
+
+    return r.text
