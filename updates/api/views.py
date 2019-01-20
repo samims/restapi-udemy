@@ -33,17 +33,27 @@ class UpdateModeDetailAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         return self.render_to_response(json_data, status=403)
 
     def put(self, request, id, *args, **kwargs):
-        obj = self.get_object(id=id)
-        if obj is None:
-            error_data = json.dumps({"message": "update not Found"})
-            return self.render_to_response(error_data, status=404)
         valid_json = is_json(request.body)
         if not valid_json:
-            error_data = json.dumps({'message': "Invalid data, please send in json format"})
-            return self.render_to_response(error_data, status=400)
+            errot_data = json.dumps({"message": "Invalid data, sent, please send using JSON"})
+            return self.get_object(id)
+        obj = self.get_object(id)
+        if obj is None:
+            errot_data = json.dumps({"message": "Update not found"})
+            return self.render_to_response(errot_data, status=404)
+        passed_data = json.loads(request.body)
+        form = UpdateModelForm(passed_data)
+        if form.is_valid():
+            obj = form.save()
+            obj_data = obj.serialize()
+            return self.render_to_response(obj_data, status=201)
+        if form.errors:
+            data = json.dumps(form.errors)
+            return self.render_to_response(data, status=400)
 
-        json_data = json.dumps({"message": "Something"})
+        json_data = json.dumps({"message": "something went wrong"})
         return self.render_to_response(json_data)
+
 
     def delete(self, request, id, *args, **kwargs):
         obj = self.get_object(id=id)

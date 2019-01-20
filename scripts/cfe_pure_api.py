@@ -20,13 +20,12 @@ def get_list():
     return data
 
 
-
 def create_update():
     new_data = {
         "user": 1,
         "content": "This is the third article"
     }
-    r = requests.post(BASE_URL + ENDPOINT ,  data=json.dumps(new_data))
+    r = requests.post(BASE_URL + ENDPOINT, data=json.dumps(new_data))
     print(r.status_code)
     # print(r.headers)
     if r.status_code == requests.codes.ok:
@@ -36,14 +35,16 @@ def create_update():
 
 
 # print(get_list())
-print(create_update())
+# print(create_update())
+
+
 # print(get_object())
 
 def do_obj_update():
     new_data = {
         "content": "Another more cool content"
     }
-    r = requests.put(BASE_URL + ENDPOINT + "1" + "/",  data=json.dumps(new_data))
+    r = requests.put(BASE_URL + ENDPOINT + "1" + "/", data=json.dumps(new_data))
     print(r.status_code)
     if r.status_code == requests.codes.ok:
         return r.json()
@@ -59,3 +60,4 @@ def do_obj_delete():
 
 
 # print(do_obj_update())
+print(do_obj_update())
