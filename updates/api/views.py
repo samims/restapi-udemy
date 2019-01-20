@@ -5,6 +5,7 @@ from ..forms import UpdateModelForm
 from ..models import Update as UpdateModel
 from .mixins import CSRFExemptMixin
 from myapi.mixins import HttpResponseMixin
+from .utils import is_json
 
 
 class UpdateModeDetailAPIView(HttpResponseMixin, CSRFExemptMixin, View):
@@ -36,17 +37,20 @@ class UpdateModeDetailAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         if obj is None:
             error_data = json.dumps({"message": "update not Found"})
             return self.render_to_response(error_data, status=404)
-        print(dir(request))
-        print(request.POST)
-        print(request.data)
-        json_data = {}
+        valid_json = is_json(request.body)
+        if not valid_json:
+            error_data = json.dumps({'message': "Invalid data, please send in json format"})
+            return self.render_to_response(error_data, status=400)
+
+        json_data = json.dumps({"message": "Something"})
         return self.render_to_response(json_data)
 
     def delete(self, request, id, *args, **kwargs):
         obj = self.get_object(id=id)
         if obj is None:
             error_data = json.dumps({"message": "Update not found"})
-        json_data = {}
+            return self.render_to_response(error_data, status=404)
+        json_data = json.dumps({"message": "Something"})
         return self.render_to_response(json_data, status=403)
 
 
@@ -62,7 +66,12 @@ class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         return self.render_to_response(json_data, status=200)
 
     def post(self, request, *args, **kwargs):
-        form = UpdateModelForm(request.POST)
+        valid_json = is_json(request.body)
+        if not valid_json:
+            error_data = json.dumps({"message": "Invalid data sent, please send json"})
+            return self.render_to_response(data=error_data, status=400)
+        data = json.loads(request.body)
+        form = UpdateModelForm(data)
         if form.is_valid():
             obj = form.save(commit=True)
             obj_data = obj.serialize()
