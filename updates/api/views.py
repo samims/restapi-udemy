@@ -35,23 +35,26 @@ class UpdateModeDetailAPIView(HttpResponseMixin, CSRFExemptMixin, View):
     def put(self, request, id, *args, **kwargs):
         valid_json = is_json(request.body)
         if not valid_json:
-            errot_data = json.dumps({"message": "Invalid data, sent, please send using JSON"})
-            return self.get_object(id)
-        obj = self.get_object(id)
+            error_data = json.dumps({"message": "Invalid data sent, send json"})
+            return self.render_to_response(error_data, status=400)
+        obj = self.get_object(id=id)
         if obj is None:
-            errot_data = json.dumps({"message": "Update not found"})
-            return self.render_to_response(errot_data, status=404)
+            error_data = json.dumps({"message": "Update not found"})
+            return self.render_to_response(error_data, status=400)
+        data = json.loads(obj.serialize())
         passed_data = json.loads(request.body)
-        form = UpdateModelForm(passed_data)
+        for key, value in passed_data.items():
+            data[key] = value
+        print(passed_data)
+        form = UpdateModelForm(data, instance=obj)
         if form.is_valid():
-            obj = form.save()
-            obj_data = obj.serialize()
+            obj = form.save(commit=True)
+            obj_data = json.dumps(data)
             return self.render_to_response(obj_data, status=201)
         if form.errors:
             data = json.dumps(form.errors)
             return self.render_to_response(data, status=400)
-
-        json_data = json.dumps({"message": "something went wrong"})
+        json_data = json.dumps({"mesage": "Something"})
         return self.render_to_response(json_data)
 
 
@@ -60,8 +63,14 @@ class UpdateModeDetailAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         if obj is None:
             error_data = json.dumps({"message": "Update not found"})
             return self.render_to_response(error_data, status=404)
-        json_data = json.dumps({"message": "Something"})
-        return self.render_to_response(json_data, status=403)
+        deleted_, item_deleted = obj.delete()
+        if deleted_:
+            json_data = json.dumps({"message": "Deleted"})
+            return self.render_to_response(json_data, status=200)
+        error_data = json.dumps({"mesage": "Could not delete item, Please try again"})
+        return self.render_to_response(error_data, status=400)
+
+        
 
 
 class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
