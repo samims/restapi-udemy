@@ -5,6 +5,7 @@ from ..models import Update as UpdateModel
 from .mixins import CSRFExemptMixin
 from myapi.mixins import HttpResponseMixin
 from .utils import is_json
+
 class UpdateModeDetailAPIView(HttpResponseMixin, CSRFExemptMixin, View):
     """
     Retrieve, Update & Delete view
@@ -54,13 +55,12 @@ class UpdateModeDetailAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         json_data = json.dumps({"mesage": "Something"})
         return self.render_to_response(json_data)
 
-
     def delete(self, request, id, *args, **kwargs):
         obj = self.get_object(id=id)
         if obj is None:
             error_data = json.dumps({"message": "Update not found"})
             return self.render_to_response(error_data, status=404)
-        deleted_, item_deleted = obj.delete()
+        deleted_, _ = obj.delete()
         if deleted_:
             json_data = json.dumps({"message": "Deleted"})
             return self.render_to_response(json_data, status=200)
@@ -68,14 +68,9 @@ class UpdateModeDetailAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         return self.render_to_response(error_data, status=400)
 
         
-
-
 class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
     """
-    List View --> Retrieve view  --> DetailView
-    Create
-    Update
-    Delete
+    single endpoint for CRUD
     """
     is_json = True
     queryset = None
@@ -95,7 +90,18 @@ class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         return None
 
     def get(self, request, *args, **kwargs):
-        qs = self.get_queryset().filter(id=id)
+        data = {}
+        if request.body:
+            data = json.loads(request.body)
+        passed_id = data.get('id')
+        if passed_id is not None:
+            obj = self.get_object(id=passed_id)
+            if obj is None:
+                error_data = json.dumps({"message": "Object not found"})
+                return self.render_to_response(error_data, status=400)
+            json_data = obj.serialize()
+            return self.render_to_response(json_data)
+        qs = self.get_queryset()
         json_data = qs.serialize()
         return self.render_to_response(json_data, status=200)
 
@@ -146,11 +152,6 @@ class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         return self.render_to_response(json_data)
 
     def delete(self, request,*args, **kwargs):
-        # obj = self.get_object(id=id)
-        # if obj is None:
-        #     error_data = json.dumps({"message": "Update Not found"})
-        #     return self.render_to_response(error_data, status=404)
-
         valid_json = is_json(request.body)
         if not valid_json:
             error_data = json.dumps({"message": "Invalid data sent, please send using JSON."})
@@ -166,7 +167,7 @@ class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
             error_data = json.dumps({"message": "Object not found"})
             return self.render_to_response(error_data, status=400)
 
-        deleted_, item_deleted = obj.delete()
+        deleted_, _= obj.delete()
         if deleted_:
             json_data = json.dumps({"message": "Successfully deleted."})
             return self.render_to_response(json_data, status=200)

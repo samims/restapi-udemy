@@ -5,18 +5,16 @@ BASE_URL = "http://127.0.0.1:8000/"
 ENDPOINT = "api/updates/"
 
 
-def get_list():
-    r = requests.get(BASE_URL + ENDPOINT)
+def get_list(id=None):
+    data = json.dumps({})
+    if id is not None:
+        data = json.dumps({"id": id})
+    data = json.dumps({"id":id})
+    r = requests.get(BASE_URL + ENDPOINT, data=data)
     status_code = r.status_code
-    print(status_code)
-    if status_code != 404:
-        print("Probably good enough!")
+    if status_code != 200:
+        print("Not good. status code is ->", status_code)
     data = r.json()
-    for obj in data:
-        if obj['id'] == 1:
-            r2 = requests.get(BASE_URL + ENDPOINT + str(obj['id']))
-            # print(dir(r2))
-            print(r2.json())
     return data
 
 
@@ -32,7 +30,7 @@ def create_update():
     return r.text
 
 
-# print(get_list())
+print(get_list())
 # print(create_update())
 
 
@@ -60,4 +58,4 @@ def do_obj_delete():
 
 # print(do_obj_update())
 # print(do_obj_update())
-print(do_obj_delete())
+# print(do_obj_delete())
