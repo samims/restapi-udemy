@@ -30,7 +30,7 @@ def create_update():
     return r.text
 
 
-print(get_list())
+# print(get_list())
 # print(create_update())
 
 
@@ -59,3 +59,19 @@ def do_obj_delete():
 # print(do_obj_update())
 # print(do_obj_update())
 # print(do_obj_delete())
+ENDPOINT = 'api/books/'
+
+
+def create_book():
+    url =  BASE_URL + ENDPOINT
+    data = {
+        "title": "First Book",
+        "isbn": "xbcnd,d"
+    }
+    r = requests.post(url, data=data)# json.dumps(data))
+    print(r.status_code)
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    return r.text
+
+print(create_book())
