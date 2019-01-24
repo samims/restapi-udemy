@@ -6,6 +6,7 @@ from .mixins import CSRFExemptMixin
 from myapi.mixins import HttpResponseMixin
 from .utils import is_json
 
+
 class UpdateModeDetailAPIView(HttpResponseMixin, CSRFExemptMixin, View):
     """
     Retrieve, Update & Delete view
@@ -67,7 +68,7 @@ class UpdateModeDetailAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         error_data = json.dumps({"mesage": "Could not delete item, Please try again"})
         return self.render_to_response(error_data, status=400)
 
-        
+
 class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
     """
     single endpoint for CRUD
@@ -79,7 +80,6 @@ class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         qs = UpdateModel.objects.all()
         self.queryset = qs
         return qs
-    
 
     def get_object(self, id=None):
         if id is None:
@@ -92,6 +92,10 @@ class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
     def get(self, request, *args, **kwargs):
         data = {}
         if request.body:
+            is_valid = is_json(request.body)
+            if not is_valid:
+                data = json.dumps({"message": "Please send Json Data"})
+                return self.render_to_response(data=data, status=400)
             data = json.loads(request.body)
         passed_id = data.get('id')
         if passed_id is not None:
@@ -121,7 +125,7 @@ class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
             return self.render_to_response(data, status=400)
         data = {"message": "Not Allowed"}
         return self.render_to_response(data, status=400)
-    
+
     def put(self, request, *args, **kwargs):
         valid_json = is_json(request.body)
         if not valid_json:
@@ -151,7 +155,7 @@ class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         json_data = json.dumps({"mesage": "Something"})
         return self.render_to_response(json_data)
 
-    def delete(self, request,*args, **kwargs):
+    def delete(self, request, *args, **kwargs):
         valid_json = is_json(request.body)
         if not valid_json:
             error_data = json.dumps({"message": "Invalid data sent, please send using JSON."})
@@ -167,7 +171,7 @@ class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
             error_data = json.dumps({"message": "Object not found"})
             return self.render_to_response(error_data, status=400)
 
-        deleted_, _= obj.delete()
+        deleted_, _ = obj.delete()
         if deleted_:
             json_data = json.dumps({"message": "Successfully deleted."})
             return self.render_to_response(json_data, status=200)

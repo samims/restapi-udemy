@@ -1,4 +1,5 @@
 import json
+from django.contrib.auth.models import User
 from django.db import models
 
 
@@ -18,6 +19,7 @@ class BookModelManager(models.Manager):
 
 class Book(models.Model):
     title = models.CharField(max_length=500, null=True)
+    author = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
     isbn = models.CharField(max_length=50, null=True)
 
     objects = BookModelManager()

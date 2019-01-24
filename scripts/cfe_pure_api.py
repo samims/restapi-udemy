@@ -9,7 +9,7 @@ def get_list(id=None):
     data = json.dumps({})
     if id is not None:
         data = json.dumps({"id": id})
-    data = json.dumps({"id":id})
+    data = json.dumps({"id": id})
     r = requests.get(BASE_URL + ENDPOINT, data=data)
     status_code = r.status_code
     if status_code != 200:
@@ -63,15 +63,27 @@ ENDPOINT = 'api/books/'
 
 
 def create_book():
-    url =  BASE_URL + ENDPOINT
+    url = BASE_URL + ENDPOINT
     data = {
+        "author": 1,
         "title": "First Book",
-        "isbn": "xbcnd,d"
+        "isbn": "xbcndd"
     }
-    r = requests.post(url, data=data)# json.dumps(data))
+    r = requests.post(url, data=json.dumps(data))
     print(r.status_code)
     if r.status_code == requests.codes.ok:
         return r.json()
     return r.text
 
-print(create_book())
+
+def get_book():
+    url = BASE_URL + ENDPOINT
+    data = {'id': 1}
+    r = requests.get(url, data=json.dumps(data))
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    return r.text
+
+
+# print(create_book())
+print(get_book())
