@@ -44,7 +44,6 @@ class UpdateModeDetailAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         passed_data = json.loads(request.body)
         for key, value in passed_data.items():
             data[key] = value
-        print(passed_data)
         form = UpdateModelForm(data, instance=obj)
         if form.is_valid():
             obj = form.save(commit=True)
@@ -143,10 +142,9 @@ class UpdateModelListAPIView(HttpResponseMixin, CSRFExemptMixin, View):
         data = json.loads(obj.serialize())
         for key, value in passed_data.items():
             data[key] = value
-        print(passed_data)
         form = UpdateModelForm(data, instance=obj)
         if form.is_valid():
-            obj = form.save(commit=True)
+            form.save(commit=True)
             obj_data = json.dumps(data)
             return self.render_to_response(obj_data, status=201)
         if form.errors:

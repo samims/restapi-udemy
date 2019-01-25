@@ -24,7 +24,6 @@ def create_update():
         "content": "This is the third article"
     }
     r = requests.post(BASE_URL + ENDPOINT, data=json.dumps(new_data))
-    print(r.status_code)
     if r.status_code == requests.codes.ok:
         return r.json()
     return r.text
@@ -78,12 +77,36 @@ def create_book():
 
 def get_book():
     url = BASE_URL + ENDPOINT
-    data = {'id': 1}
+    data = {
+        'id': 1
+    }
     r = requests.get(url, data=json.dumps(data))
     if r.status_code == requests.codes.ok:
         return r.json()
     return r.text
 
 
+def update_book():
+    url = BASE_URL + ENDPOINT
+    data = json.dumps({'id': 2,
+                       'author': 1,
+                       'title': "New Update"
+                       })
+    r = requests.put(url, data=data)
+    return r.text
+
+
+def delete():
+    url = BASE_URL + ENDPOINT
+
+    data = json.dumps({"id": 2})
+    r = requests.delete(url, data=data)
+    if r.status_code == requests.codes.ok:
+        return r.json()
+    return r.text
+
+
 # print(create_book())
-print(get_book())
+# print(get_book())
+# print(update_book())
+print(delete())
