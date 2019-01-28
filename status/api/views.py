@@ -1,4 +1,4 @@
-from rest_framework.generics import ListAPIView, CreateAPIView
+from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -37,14 +37,27 @@ class StatusCreateAPIView(CreateAPIView):
     queryset = Status.objects.all()
 
 
+class StatusDetailAPIView(RetrieveAPIView):
+    permission_classes = []
+    authentication_classes = []
 
-class StatusDetailAPIView:
-    pass
+    queryset = Status.objects.all()
+    serializer_class = StatusSerializer
+    # lookup_field = 'id'
 
 
-class StatusUpdateAPIView:
-    pass
+class StatusUpdateAPIView(UpdateAPIView):
+    authentication_classes = []
+    permission_classes = []
+
+    serializer_class = StatusSerializer
+    queryset = Status.objects.all()
+    # lookup_field = 'id'
 
 
-class StatusDeleteAPIView:
-    pass
+class StatusDeleteAPIView(DestroyAPIView):
+    # authentication_classes = []
+    serializer_class = StatusSerializer
+    queryset = Status.objects.all()
+
+
