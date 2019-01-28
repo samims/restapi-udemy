@@ -9,7 +9,6 @@ def get_list(id=None):
     data = json.dumps({})
     if id is not None:
         data = json.dumps({"id": id})
-    data = json.dumps({"id": id})
     r = requests.get(BASE_URL + ENDPOINT, data=data)
     status_code = r.status_code
     if status_code != 200:
