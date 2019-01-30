@@ -23,6 +23,15 @@ class StatusAPIView(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, Dest
     serializer_class = StatusSerializer
     padded_id = None
 
+    def __init__(self):
+        super(StatusAPIView, self).__init__()
+        self.passed_id = None
+
+    def perform_destroy(self, instance):
+        if instance is not None:
+            return instance.delete()
+        return None
+
     def get_queryset(self):
         qs = Status.objects.all()
         query = self.request.GET.get('q')
@@ -44,6 +53,7 @@ class StatusAPIView(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, Dest
         url_passed_id = request.GET.get('id')
         json_data = {}
         body_ = request.body
+        print(request.body)
         if is_json(body_):
             json_data = json.loads(request.body)
         new_passed_id = json_data.get('id')
@@ -54,13 +64,48 @@ class StatusAPIView(CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, Dest
         return super(StatusAPIView, self).get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        url_passed_id = request.GET.get('id')
+        json_data = {}
+        body_ = request.body
+        if is_json(body_):
+            json_data = json.loads(request.body)
+        new_passed_id = json_data.get('id')
+        passed_id = url_passed_id or new_passed_id
+        print(passed_id)
+        self.passed_id = passed_id
         return self.create(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
+        url_passed_id = request.GET.get('id')
+        json_data = {}
+        body_ = request.body
+        if is_json(body_):
+            json_data = json.loads(request.body)
+        new_passed_id = json_data.get('id')
+        passed_id = url_passed_id or new_passed_id
+        print(passed_id)
+        self.passed_id = passed_id
         return self.update(request, *args, **kwargs)
 
     def patch(self, request, *args, **kwargs):
+        url_passed_id = request.GET.get('id')
+        json_data = {}
+        body_ = request.body
+        if is_json(body_):
+            json_data = json.loads(request.body)
+        new_passed_id = json_data.get('id')
+        passed_id = url_passed_id or new_passed_id
+        print(passed_id)
+        self.passed_id = passed_id
         return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
+        url_passed_id = request.GET.get('id')
+        json_data = {}
+        body_ = request.body
+        if is_json(body_):
+            json_data = json.loads(request.body)
+        new_passed_id = json_data.get('id')
+        passed_id = url_passed_id or new_passed_id
+        self.passed_id = passed_id
         return self.destroy(request, *args, **kwargs)
