@@ -1,15 +1,14 @@
 import json
 from rest_framework.generics import ListAPIView, RetrieveAPIView
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
-from django.shortcuts import get_object_or_404
-
+from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, DestroyModelMixin
+from rest_framework.authentication import SessionAuthentication
+from rest_framework import permissions
 from status.models import Status
 from .serializers import StatusSerializer
 
 
 class StatusAPIDetailView(UpdateModelMixin, DestroyModelMixin, RetrieveAPIView):
-    permission_classes = []
-    authentication_classes = []
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = StatusSerializer
     queryset = Status.objects.all()
     lookup_field = 'id'
@@ -23,12 +22,6 @@ class StatusAPIDetailView(UpdateModelMixin, DestroyModelMixin, RetrieveAPIView):
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
 
-    # it will avoid err if object not found
-    # def perform_destroy(self, instance):
-    #     if instance is not None:
-    #         return instance.delete()
-    #     return None
-
 
 def is_json(json_data):
     try:
@@ -40,11 +33,17 @@ def is_json(json_data):
 
 
 class StatusAPIView(CreateModelMixin, ListAPIView):
-    permission_classes = []
-    authentication_classes = []
-
-    queryset = Status.objects.all()
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = StatusSerializer
+
+    def get_queryset(self):
+        request = self.request
+        print(request.user)
+        qs = Status.objects.all()
+        query = request.GET.get('q')
+        if query is not None:
+            qs = qs.filter(content__icontains=query)
+        return qs
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)

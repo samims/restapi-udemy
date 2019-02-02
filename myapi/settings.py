@@ -1,5 +1,5 @@
 import os
-
+from myapi.restconf.main import *
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 SECRET_KEY = '@&9_9k2b7)bn0$p9&h!-&981rnw7tqzzu7#b07==85d8&p@i%1'
