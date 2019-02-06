@@ -38,7 +38,6 @@ class StatusAPIView(CreateModelMixin, ListAPIView):
 
     def get_queryset(self):
         request = self.request
-        print(request.user)
         qs = Status.objects.all()
         query = request.GET.get('q')
         if query is not None:
