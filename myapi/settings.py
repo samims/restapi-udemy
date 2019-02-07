@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "updates",
     "books",
     "status",
+    "accounts",
 
 ]
 
