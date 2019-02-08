@@ -12,8 +12,7 @@ jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
 
 
-class AuthView(APIView):
-    authentication_classes = []
+class AuthAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request, *args, **kwargs):
@@ -25,17 +24,45 @@ class AuthView(APIView):
         password = data.get('password')
         user = authenticate(username=username, password=password)
         qs = User.objects.filter(
-            Q(username__iexact=username)|
+            Q(username__iexact=username) |
             Q(email__iexact=username)
         ).distinct()
         if qs.count():
             user_obj = qs.first()
             if user_obj.check_password(password):
                 user = user_obj
+                payload = jwt_payload_handler(user)
+                token = jwt_encode_handler(payload)
+                response = jwt_response_payload_handler(token, user, request)
+                print(user)
+                return Response(response, status=201)
+        return Response({"detail": " Invalid request"}, status=400)
 
-            payload = jwt_payload_handler(user)
-            token = jwt_encode_handler(payload)
-            response = jwt_response_payload_handler(token, user, request)
-            print(user)
-            return Response(response)
-        return Response({"detail":" Invalid Credential"}, status=402)
+
+class RegisterAPIView(APIView):
+    permission_classes = []
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return Response({"detail": "You are already registeded and authenticatied"}, status=400)
+
+        data = request.data
+        username = data.get("username")
+        email = data.get("email")
+        password = data.get("password")
+        passowrd2 = data.get("password2")
+
+        if password != passowrd2:
+            return Response({"detail": "password must match."})
+        qs = User.objects.filter(
+            Q(username__iexact=username) |
+            Q(email__iexact=username)
+        )
+        if qs.exists():
+            return Response({"detail": "This username or email already exists"}, status=401)
+        user = User.objects.create_user(username=username, email=email, password=password)
+        user.save()
+        # payload = jwt_payload_handler(user)
+        # token = jwt_encode_handler(payload)
+        # response = jwt_response_payload_handler(token, user, request=request)
+        return Response(data={"detail": "Thank you for registering. Please verify your email"}, status=201)

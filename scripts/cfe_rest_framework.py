@@ -2,10 +2,16 @@ import requests
 import json
 import os
 
+AUTH_ENDPOINT = "http://127.0.0.1:8000/api/auth/register/"
+REFRESH_ENDPOINT = AUTH_ENDPOINT + "refresh/"
 ENDPOINT = "http://127.0.0.1:8000/api/status/"
-AUTH_ENDPOINT = "http://127.0.0.1:8000/api/auth/"
-data = {'username': "admin@example.com", 'password': "pass1234"}
-r = requests.post(AUTH_ENDPOINT, data=data)
+# AUTH_ENDPOINT = "http://127.0.0.1:8000/api/auth/register"
+data = {'username': "sam1",'email': "sam1@example.com", 'password': "pass1234", "password2": "pass1234"}
+headers = {
+    "content-type": "application/json",
+    # "Authorization": "JWT " + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTQ5NjI2MTA3LCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwib3JpZ19pYXQiOjE1NDk2MjU4MDd9.Q7PwzubNN6YcFmk3fqiuxpc1xVX0eYnfdyCDxj5kN3w'}
+}
+r = requests.post(AUTH_ENDPOINT, data=json.dumps(data), headers=headers)
 # token = r.json()['token']
 print(r)
 print(r.json())
@@ -23,7 +29,7 @@ image_path = os.path.join(os.getcwd(), "logo.jpg")
 # r = requests.get(get_endpoint)
 # print(r.status_code)
 
-# headers = {"Authorization": "JWT " + token}
+# headers = {"Authorization": "JWT " + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluIiwiZXhwIjoxNTQ5NjIxMzUzLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwib3JpZ19pYXQiOjE1NDk2MjEwNTN9.S36KymSxMXuQYxczpjKB1E4Jl9tcEhBiILnHr42UtE8', 'user': 'admin', 'expires': '2019-02-15T10:14:13.476219Z'}
 #
 # post_data = {"content": "Updated random contents"}
 # with open(image_path, 'rb') as image:
