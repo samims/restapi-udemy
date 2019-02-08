@@ -3,10 +3,10 @@ import json
 import os
 
 ENDPOINT = "http://127.0.0.1:8000/api/status/"
-AUTH_ENDPOINT = "http://127.0.0.1:8000/api/auth/jwt/"
-data = {'username': "admin", 'password': "pass1234"}
+AUTH_ENDPOINT = "http://127.0.0.1:8000/api/auth/"
+data = {'username': "admin@example.com", 'password': "pass1234"}
 r = requests.post(AUTH_ENDPOINT, data=data)
-token = r.json()['token']
+# token = r.json()['token']
 print(r)
 print(r.json())
 
@@ -23,17 +23,17 @@ image_path = os.path.join(os.getcwd(), "logo.jpg")
 # r = requests.get(get_endpoint)
 # print(r.status_code)
 
-headers = {"Authorization": "JWT " + token}
-
-post_data = {"content": "Updated random contents"}
-with open(image_path, 'rb') as image:
-    file_data = {
-        'image': image
-    }
-    # posted_response = requests.post(ENDPOINT, data=post_data, files=file_data, headers=headers)
-    posted_response = requests.put(ENDPOINT +"25/", data=post_data, files=file_data, headers=headers)
-    print(posted_response.text)
-    get_endpoint = ENDPOINT + str(12)
+# headers = {"Authorization": "JWT " + token}
+#
+# post_data = {"content": "Updated random contents"}
+# with open(image_path, 'rb') as image:
+#     file_data = {
+#         'image': image
+#     }
+#     # posted_response = requests.post(ENDPOINT, data=post_data, files=file_data, headers=headers)
+#     posted_response = requests.put(ENDPOINT +"25/", data=post_data, files=file_data, headers=headers)
+#     print(posted_response.text)
+#     get_endpoint = ENDPOINT + str(12)
 
 # post_headers = json.dumps({'content-type': 'application/json'})
 # r = requests.post(ENDPOINT, data=post_data)
