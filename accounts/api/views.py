@@ -19,6 +19,11 @@ class RegisterAPIView(generics.CreateAPIView):
     serializer_class = UserRegisterSerializer
     permission_classes = [permissions.AllowAny]
 
+    def get_serializer_context(self):
+        return super().get_serializer_context()
+        return {"request": self.request}
+
+
 
 
 class AuthAPIView(APIView):
