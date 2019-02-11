@@ -37,6 +37,7 @@ class AuthAPIView(APIView):
             Q(email__iexact=username)
         ).distinct()
         if qs.count():
+            print("#########################################")
             user_obj = qs.first()
             if user_obj.check_password(password):
                 user = user_obj

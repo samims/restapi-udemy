@@ -1,14 +1,15 @@
 import json
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.mixins import CreateModelMixin, UpdateModelMixin, DestroyModelMixin
-from rest_framework.authentication import SessionAuthentication
 from rest_framework import permissions
 from status.models import Status
 from .serializers import StatusSerializer
 
+from accounts.api.permissions import IsOwnerOrReadOnly
+
 
 class StatusAPIDetailView(UpdateModelMixin, DestroyModelMixin, RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
     serializer_class = StatusSerializer
     queryset = Status.objects.all()
     lookup_field = 'id'
