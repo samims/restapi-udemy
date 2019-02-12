@@ -7,12 +7,21 @@ from rest_framework_jwt.settings import api_settings
 
 from .permissions import AnonPermissionOnly
 from .serializers import UserRegisterSerializer
+from accounts.api.user.serializers import UserDetailSerializer
 
 User = get_user_model()
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
+
+
+class UserDetailAPIView(generics.RetrieveAPIView):
+    permission_classes = []
+
+    queryset = User.objects.filter(is_active=True)
+    serializer_class = UserDetailSerializer
+    lookup_field = 'username'
 
 
 class RegisterAPIView(generics.CreateAPIView):
