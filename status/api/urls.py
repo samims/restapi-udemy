@@ -1,5 +1,6 @@
 from django.conf.urls import url
-from .views import StatusAPIView, StatusAPIDetailView
+
+from .views import StatusAPIDetailView, StatusAPIView
 
 urlpatterns = [
     url(r'^$', StatusAPIView.as_view()),

@@ -1,11 +1,13 @@
 from django.contrib.auth import get_user_model
 from rest_framework import generics
-
+from rest_framework.response import Response
 from rest_framework_jwt.settings import api_settings
 
-from .serializers import UserDetailSerializer
 from status.api.serializers import StatusInlineUserSerializer
+from status.api.views import StatusAPIView
 from status.models import Status
+
+from .serializers import UserDetailSerializer
 
 User = get_user_model()
 
@@ -19,17 +21,17 @@ class UserDetailAPIView(generics.RetrieveAPIView):
     serializer_class = UserDetailSerializer
     lookup_field = 'username'
 
-    # **********************************
-    # def get_serializer_context(self):
-    #     return {'request': self.request}
-    #
 
-
-class UserStatusAPIView(generics.ListAPIView):
+class UserStatusAPIView(StatusAPIView):
     serializer_class = StatusInlineUserSerializer
+
+    search_fields = ('id',)
 
     def get_queryset(self, *args, **kwargs):
         username = self.kwargs.get("username")
         if username is None:
             return Status.objects.none()
         return Status.objects.filter(user__username=username)
+
+    def post(self, request, *args, **kwargs):
+        return Response({"detail": "Not allowed here"})

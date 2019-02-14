@@ -1,10 +1,6 @@
 from django.conf.urls import url
 
-from .views import (
-    UpdateModeDetailAPIView,
-    UpdateModelListAPIView,
-)
-
+from .views import UpdateModeDetailAPIView, UpdateModelListAPIView
 
 urlpatterns = [
     url(r'^$', UpdateModelListAPIView.as_view(), ),

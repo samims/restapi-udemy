@@ -1,9 +1,12 @@
 import json
+
 from django.views.generic import View
+
+from myapi.mixins import HttpResponseMixin
+
 from ..forms import UpdateModelForm
 from ..models import Update as UpdateModel
 from .mixins import CSRFExemptMixin
-from myapi.mixins import HttpResponseMixin
 from .utils import is_json
 
 

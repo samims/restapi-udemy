@@ -2,6 +2,7 @@ from django.http import HttpResponse, JsonResponse
 from django.views.generic import View
 
 from myapi.mixins import JsonResponseMixin
+
 from .models import Update
 
 

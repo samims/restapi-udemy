@@ -3,8 +3,8 @@ Just Notes
 """
 
 from django.utils.six import BytesIO
-from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from rest_framework.renderers import JSONRenderer
 
 from status.api.serializers import StatusSerializer
 from status.models import Status

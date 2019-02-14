@@ -1,9 +1,11 @@
 import json
+
 from django.views import View
 
-from ..models import Book as BookModel
-from ..forms import BookModelForm
 from myapi.mixins import HttpResponseMixin
+
+from ..forms import BookModelForm
+from ..models import Book as BookModel
 from .mixins import CSRFExemptMixin
 from .utils import is_json
 

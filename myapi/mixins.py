@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 
 class HttpResponseMixin(object):

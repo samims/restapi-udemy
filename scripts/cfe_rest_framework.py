@@ -1,7 +1,7 @@
 import json
 import os
-import requests
 
+import requests
 
 AUTH_ENDPOINT = "http://127.0.0.1:8000/api/auth/"
 REFRESH_ENDPOINT = AUTH_ENDPOINT + "refresh/"
