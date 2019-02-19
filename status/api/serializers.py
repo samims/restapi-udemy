@@ -1,25 +1,8 @@
 from rest_framework import serializers
+from rest_framework.reverse import reverse as api_reverse
 
 from accounts.api.serializers import UserPublicSerializer
 from status.models import Status
-
-
-class StatusInlineUserSerializer(serializers.ModelSerializer):
-    uri = serializers.SerializerMethodField(read_only=True)
-    # user = UserPublicSerializer(read_only=True)
-
-    class Meta:
-        model = Status
-        fields = [
-            'uri',
-            'id',
-            # 'user',
-            'content',
-            'image'
-        ]
-
-    def get_uri(self, obj):
-        return "/api/status/{}/".format(obj.id)
 
 
 class StatusSerializer(serializers.ModelSerializer):
@@ -37,16 +20,11 @@ class StatusSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ('user',)
 
+
     def get_uri(self, obj):
-        return "/api/status/{}".format(obj.id)
+        request = self.context['request']
+        return api_reverse('api-status:detail', kwargs={'id': obj.id}, request=request)
 
-    # field level validation
-    # def validate_content(self, value):
-    #     if len(value) > 10000:
-    #         raise serializers.ValidationError("This is way to long")
-    #     return value
-
-    # whole serializer validation
     def validate(self, attrs):
         content, image = attrs.get("content"), attrs.get('image')
         if not content and not image:
@@ -54,9 +32,12 @@ class StatusSerializer(serializers.ModelSerializer):
         return attrs
 
 
-'''
-class CustomSerializer(serializers.Serializer):
-    content = serializers.CharField()
-    email = serializers.EmailField()
-
-'''
+class StatusInlineUserSerializer(StatusSerializer):
+    class Meta:
+        model = Status
+        fields = [
+            'uri',
+            'id',
+            'content',
+            'image'
+        ]

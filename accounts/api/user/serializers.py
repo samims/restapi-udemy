@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.reverse import reverse as api_reverse
 
 from status.api.serializers import StatusInlineUserSerializer
 
@@ -21,7 +22,8 @@ class UserDetailSerializer(serializers.ModelSerializer):
         ]
 
     def get_uri(self, obj):
-        return "/api/users/id/{}/".format(obj.id)
+        request = self.context['request']
+        return api_reverse('api-user:detail', kwargs={'username': obj.username}, request=request)
 
     def get_status(self, obj):
         request = self.context.get('request', '')
@@ -36,7 +38,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
         data = {
             'uri': self.get_uri(obj) + "status/",
-            'last': StatusInlineUserSerializer(qs.first()).data,
-            'recent': StatusInlineUserSerializer(qs[:limit], many=True).data
+            'last': StatusInlineUserSerializer(qs.first(), context={'request': request}).data,
+            'recent': StatusInlineUserSerializer(qs[:limit], many=True, context={'request':request}).data
         }
         return data
