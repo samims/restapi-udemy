@@ -14,6 +14,21 @@ jwt_response_payload_handler = api_settings.JWT_RESPONSE_PAYLOAD_HANDLER
 expire_delta = api_settings.JWT_REFRESH_EXPIRATION_DELTA
 
 
+class UserPublicSerializer(serializers.ModelSerializer):
+    uri = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            'id',
+            'username',
+            'uri'
+        ]
+
+    def get_uri(self, obj):
+        return api_reverse("api-user:detail", kwargs={'username': obj.username}, request=self.context['request'])
+
+
 class UserDetailSerializer(serializers.ModelSerializer):
     uri = serializers.SerializerMethodField(read_only=True)
     status_list = serializers.SerializerMethodField(read_only=True)
@@ -33,24 +48,11 @@ class UserDetailSerializer(serializers.ModelSerializer):
         return obj
 
 
-class UserPublicSerializer(serializers.ModelSerializer):
-    uri = serializers.SerializerMethodField(read_only=True)
-
-    class Meta:
-        model = User
-        fields = [
-            'id',
-            'username',
-            'uri'
-        ]
-
-    def get_uri(self, obj):
-        return api_reverse("api-user:detail", kwargs={'username': obj.username}, request=self.context['request'])
-
-
 class UserRegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-    password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
+    password = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True)
+    password2 = serializers.CharField(
+        style={'input_type': 'password'}, write_only=True)
     token = serializers.SerializerMethodField(read_only=True)
     expires = serializers.SerializerMethodField(read_only=True)
     message = serializers.SerializerMethodField(read_only=True)
@@ -102,11 +104,13 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def validate_email(self, value):
         qs = User.objects.filter(email__iexact=value)
         if qs.exists():
-            raise serializers.ValidationError("User with this username already exists")
+            raise serializers.ValidationError(
+                "User with this username already exists")
         return value
 
     def validate_username(self, value):
         qs = User.objects.filter(username__iexact=value)
         if qs.exists():
-            raise serializers.ValidationError("USer with this username already exists")
+            raise serializers.ValidationError(
+                "USer with this username already exists")
         return value
